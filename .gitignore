@@ -2,3 +2,7 @@
 elm-stuff
 # elm-repl generated files
 repl-temp-*
+# generated-html:
+index.html
+# node-req:
+node_modules
