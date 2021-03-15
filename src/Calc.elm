@@ -4,11 +4,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import String
 import Browser
-import Svg.Attributes exposing (y)
 import Debug exposing (toString)
-import Svg.Attributes exposing (display)
-import Svg.Attributes exposing (string)
-import Html
 
 
 -- MAIN
@@ -160,16 +156,16 @@ appendDecimal string =
 calculatorButton : Msg -> String -> Html Msg
 calculatorButton msg buttonText =
   Html.button
-    [ Html.Attributes.class "button"
-    , Html.Events.onClick msg
+    [ class "button"
+    , onClick msg
     ] [ Html.span [] [ Html.text (buttonText) ] ]
 
 calculatorButtonWide : Msg -> String -> Html Msg
 calculatorButtonWide msg buttonText =
   Html.button
-    [ Html.Attributes.class "button wide"
-    , Html.Events.onClick msg
-    ] [ Html.span [] [ Html.text (buttonText) ] ]
+    [ class "button wide"
+    , onClick msg
+    ] [ span [] [ text (buttonText) ] ]
 
 stylesheet : Html a
 stylesheet =
@@ -177,9 +173,9 @@ stylesheet =
     tag =
       "link"
     attrs = 
-      [ Html.Attributes.attribute "Rel" "stylesheet"
-      , Html.Attributes.attribute "property" "stylesheet"
-      , Html.Attributes.attribute "href" "style.css"
+      [ attribute "Rel" "stylesheet"
+      , attribute "property" "stylesheet"
+      , attribute "href" "style.css"
       ]
     child = []
   in
