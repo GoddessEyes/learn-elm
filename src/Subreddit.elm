@@ -102,6 +102,7 @@ postView : Post -> Html Msg
 postView post =
     div []
         [ a [ href post.url ] [ text post.title ]
+        , div [] [ text "<< ++++++++ >>" ]
         , a [ href <| "https://www.reddit.com" ++ post.permalink ] [ text "Comments!" ]
         , div [] [ text "<< ====================================================== >>" ]
         ]
@@ -144,7 +145,7 @@ decodeReddit =
 decodePost : Json.Decoder Post
 decodePost =
     Json.map4 Post
-        (Json.at [ "data", "id" ] Json.string)
         (Json.at [ "data", "title" ] Json.string)
         (Json.at [ "data", "url" ] Json.string)
         (Json.at [ "data", "permalink" ] Json.string)
+        (Json.at [ "data", "id" ] Json.string)
