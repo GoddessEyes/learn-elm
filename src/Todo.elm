@@ -1,67 +1,89 @@
 module Todo exposing (..)
+
 import Browser
-import Html.Attributes exposing (value, attribute, class)
-import Html exposing (div, button, text, input, ul, Html, li, node)
-import Html.Events exposing (onInput, onClick, onMouseLeave)
-import Html.Attributes exposing (type_)
+import Html exposing (Html, button, div, input, li, node, text, ul)
+import Html.Attributes exposing (attribute, class, type_, value)
+import Html.Events exposing (onClick, onInput, onMouseLeave)
 
 
-main = Browser.sandbox { init=init, view=view, update=update }
+main =
+    Browser.sandbox { init = init, view = view, update = update }
+
+
 
 -- MODEL
-type alias Model = 
-  { todo: String
-  , todos: List String
-  }
+
+
+type alias Model =
+    { todo : String
+    , todos : List String
+    }
+
+
 init : Model
 init =
-  { todo = ""
-  , todos = []
-  }
+    { todo = ""
+    , todos = []
+    }
+
+
 
 -- UPDATE
-type Msg 
-  = UpdateTodo String
-  | AddTodo
-  | RemoveAll
-  | RemoveItem String
-  | ClearInput
+
+
+type Msg
+    = UpdateTodo String
+    | AddTodo
+    | RemoveAll
+    | RemoveItem String
+    | ClearInput
+
 
 update : Msg -> Model -> Model
 update msg model =
-  case msg of
-    UpdateTodo text ->
-      { model | todo = text }
-    AddTodo ->
-      { model | todos = model.todo :: model.todos }
-    RemoveAll -> 
-      { model | todos = []}
-    RemoveItem text ->
-     { model | todos = List.filter (\x -> x /= text) model.todos}
-    ClearInput ->
-      { model | todo = ""}
+    case msg of
+        UpdateTodo text ->
+            { model | todo = text }
+
+        AddTodo ->
+            { model | todos = model.todo :: model.todos }
+
+        RemoveAll ->
+            { model | todos = [] }
+
+        RemoveItem text ->
+            { model | todos = List.filter (\x -> x /= text) model.todos }
+
+        ClearInput ->
+            { model | todo = "" }
+
+
 
 -- VIEW
+
+
 todoItem : String -> Html Msg
 todoItem todo =
- li [] [text todo, button [ onClick (RemoveItem todo)][text "x"]]
+    li [] [ text todo, button [ onClick (RemoveItem todo) ] [ text "x" ] ]
+
 
 todoList : List String -> Html Msg
 todoList todos =
-  let
-    child = List.map todoItem todos
-  in
+    let
+        child =
+            List.map todoItem todos
+    in
     ul [] child
 
-view model =
-  div [class "jumbotron"]
-  [ stylesheet
-  , input [type_ "text", onInput UpdateTodo, value model.todo, class "form-control", onMouseLeave ClearInput][]
-  , button [onClick AddTodo, class "btn btn-primary"][text "Submit"]
-  , button [onClick RemoveAll, class "btn btn-danger"] [text "Remove all"]
-  , div [] [ todoList model.todos]
-  ]
 
+view model =
+    div [ class "jumbotron" ]
+        [ stylesheet
+        , input [ type_ "text", onInput UpdateTodo, value model.todo, class "form-control", onMouseLeave ClearInput ] []
+        , button [ onClick AddTodo, class "btn btn-primary" ] [ text "Submit" ]
+        , button [ onClick RemoveAll, class "btn btn-danger" ] [ text "Remove all" ]
+        , div [] [ todoList model.todos ]
+        ]
 
 
 stylesheet =
@@ -78,4 +100,4 @@ stylesheet =
         children =
             []
     in
-        node tag attrs children
+    node tag attrs children

@@ -1,185 +1,229 @@
 module Calc exposing (..)
+
+import Browser
+import Debug exposing (toString)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 import String
-import Browser
-import Debug exposing (toString)
+
 
 
 -- MAIN
-main = Browser.sandbox { init=init, view=view, update=update }
+
+
+main =
+    Browser.sandbox { init = init, view = view, update = update }
+
+
 
 -- MODEL
+
+
 type alias Calculator =
     { add : Float -> Float -> Float
     , minus : Float -> Float -> Float
     , times : Float -> Float -> Float
     , divide : Float -> Float -> Float
     }
+
+
 calculator : Calculator
 calculator =
-  { add = (\x y -> x + y)
-  , minus = (\x y -> x - y)
-  , times = (\x y -> x * y)
-  , divide = (\x y -> x / y)
-  }
+    { add = \x y -> x + y
+    , minus = \x y -> x - y
+    , times = \x y -> x * y
+    , divide = \x y -> x / y
+    }
+
 
 type alias Model =
-  { display : String
-  , function : Float -> Float -> Float
-  , saveValue : Float
-  , append : Bool
-  }
+    { display : String
+    , function : Float -> Float -> Float
+    , saveValue : Float
+    , append : Bool
+    }
+
 
 init : Model
-init = 
-  { display = ""
-  , function = (\x y -> y)
-  , saveValue = 0
-  , append = True
-  }
+init =
+    { display = ""
+    , function = \x y -> y
+    , saveValue = 0
+    , append = True
+    }
+
 
 parseFloat : String -> Float
 parseFloat input =
-  Maybe.withDefault 0 (String.toFloat input)
+    Maybe.withDefault 0 (String.toFloat input)
+
 
 operation : Model -> (Float -> Float -> Float) -> Model
 operation model function =
-  { model
-    | function = function
-    , saveValue = (parseFloat model.display)
-    , append = False}
+    { model
+        | function = function
+        , saveValue = parseFloat model.display
+        , append = False
+    }
+
+
 
 -- UPDATE
+
+
 type Msg
-  = None
-  | Divide
-  | Times
-  | Minus
-  | Add
-  | Equal
-  | Decimal
-  | Zero
-  | Number Int
-  | Clear
+    = None
+    | Divide
+    | Times
+    | Minus
+    | Add
+    | Equal
+    | Decimal
+    | Zero
+    | Number Int
+    | Clear
+
 
 update : Msg -> Model -> Model
 update msg model =
-  case msg of
-    None ->
-      model
+    case msg of
+        None ->
+            model
 
-    Clear ->
-      init
+        Clear ->
+            init
 
-    Number number ->
-      updateDisplay model number
+        Number number ->
+            updateDisplay model number
 
-    Decimal ->
-      decimal model
+        Decimal ->
+            decimal model
 
-    Zero ->
-      zero model
+        Zero ->
+            zero model
 
-    Divide ->
-      operation model calculator.divide
+        Divide ->
+            operation model calculator.divide
 
-    Times ->
-      operation model calculator.times
+        Times ->
+            operation model calculator.times
 
-    Add ->
-      operation model calculator.add
+        Add ->
+            operation model calculator.add
 
-    Minus ->
-      operation model calculator.minus
+        Minus ->
+            operation model calculator.minus
 
-    Equal ->
-      equal model
+        Equal ->
+            equal model
 
 
 updateDisplay : Model -> Int -> Model
 updateDisplay model number =
-  if model.append then
-    { model | display = model.display ++ (number |> toString) }
-  else
-    { model 
-      | display = number |> toString
-      , append = True}
+    if model.append then
+        { model | display = model.display ++ (number |> toString) }
+
+    else
+        { model
+            | display = number |> toString
+            , append = True
+        }
+
 
 equal : Model -> Model
 equal model =
-  if model.append then 
-    { model 
-      | display = calculate model
-      , saveValue = model.display |> parseFloat
-      , append = False
-      }
-  else
-    { model 
-      | display = calculate model
-      , append = False 
-      }
+    if model.append then
+        { model
+            | display = calculate model
+            , saveValue = model.display |> parseFloat
+            , append = False
+        }
+
+    else
+        { model
+            | display = calculate model
+            , append = False
+        }
+
 
 calculate : Model -> String
-calculate model = 
-  model.function model.saveValue (parseFloat model.display) |> toString
+calculate model =
+    model.function model.saveValue (parseFloat model.display) |> toString
+
 
 zero : Model -> Model
-zero model = 
-  if String.isEmpty model.display || not model.append then
-    { model 
-      | display = "0"
-      , append = False
-    }
-  else
-   { model | display = model.display ++ "0"}
+zero model =
+    if String.isEmpty model.display || not model.append then
+        { model
+            | display = "0"
+            , append = False
+        }
+
+    else
+        { model | display = model.display ++ "0" }
+
 
 decimal : Model -> Model
-decimal model = 
-  if not (String.isEmpty model.display) && model.append then
-    { model | display = appendDecimal model.display }
-  else
-    { model 
-      | display = "0."
-      , append = True 
-    }
+decimal model =
+    if not (String.isEmpty model.display) && model.append then
+        { model | display = appendDecimal model.display }
+
+    else
+        { model
+            | display = "0."
+            , append = True
+        }
+
 
 appendDecimal : String -> String
 appendDecimal string =
-  if String.contains "." string then
-    string
-  else
-    string ++ "."
+    if String.contains "." string then
+        string
+
+    else
+        string ++ "."
+
+
+
 -- VIEW
+
 
 calculatorButton : Msg -> String -> Html Msg
 calculatorButton msg buttonText =
-  Html.button
-    [ class "button"
-    , onClick msg
-    ] [ Html.span [] [ Html.text (buttonText) ] ]
+    Html.button
+        [ class "button"
+        , onClick msg
+        ]
+        [ Html.span [] [ Html.text buttonText ] ]
+
 
 calculatorButtonWide : Msg -> String -> Html Msg
 calculatorButtonWide msg buttonText =
-  Html.button
-    [ class "button wide"
-    , onClick msg
-    ] [ span [] [ text (buttonText) ] ]
+    Html.button
+        [ class "button wide"
+        , onClick msg
+        ]
+        [ span [] [ text buttonText ] ]
+
 
 stylesheet : Html a
 stylesheet =
-  let
-    tag =
-      "link"
-    attrs = 
-      [ attribute "Rel" "stylesheet"
-      , attribute "property" "stylesheet"
-      , attribute "href" "style.css"
-      ]
-    child = []
-  in
+    let
+        tag =
+            "link"
+
+        attrs =
+            [ attribute "Rel" "stylesheet"
+            , attribute "property" "stylesheet"
+            , attribute "href" "style.css"
+            ]
+
+        child =
+            []
+    in
     node tag attrs child
+
 
 view : Model -> Html Msg
 view model =
@@ -189,7 +233,7 @@ view model =
             [ div [ class "col-xs-12" ]
                 [ div [ class "display" ]
                     [ div [ class "display-text" ]
-                        [ text (model.display) ]
+                        [ text model.display ]
                     ]
                 , div [ class "buttons" ]
                     [ calculatorButtonWide Clear "Clear"
