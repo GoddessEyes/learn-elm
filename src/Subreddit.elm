@@ -7,7 +7,10 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http
 import Json.Decode as Json
-
+import Element exposing (Element, el, row, alignRight, fill, width, rgb255, spacing, centerY, padding)
+import Element.Background as Background
+import Element.Border as Border
+import Element.Font as Font
 
 
 -- MAIN
@@ -148,4 +151,5 @@ decodePost =
         (Json.at [ "data", "title" ] Json.string)
         (Json.at [ "data", "url" ] Json.string)
         (Json.at [ "data", "permalink" ] Json.string)
+
         (Json.at [ "data", "id" ] Json.string)
